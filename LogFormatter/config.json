@@ -1,0 +1,18 @@
+{
+	"Destination":{
+		"IP":"192.168.56.1",
+		"Port":514
+	},
+
+	"Delimiter":[", "],
+
+	"Format":{
+		"T_UserEvent":["Category","Code","LogTitle","EventTime","NetMan Co., Ltd. LABS"],
+		"T_Alarm_System":["Category","LogTitle","Code","AlarmTime"],
+		"T_Alarm_IP":["Category","LogTitle","Code","AlarmTime"],
+		"T_Alarm_PC":["Category","LogTitle","Code","AlarmTime"],
+		"T_Alarm_Traffic":["Category","LogTitle"],
+		"T_Alarm_WDI":["UID"],
+		"T_UA_UserEvent":["Category","LogTitle","Code","EventTime"]
+	}
+}
