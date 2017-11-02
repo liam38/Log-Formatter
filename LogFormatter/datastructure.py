@@ -1,6 +1,6 @@
 import json
 import utility
-import socket
+#import socket
 import pymysql
 import datetime
 import threading
@@ -9,7 +9,7 @@ import queue
 import logging
 import logging.handlers
 import titlelist
-from pprint import pprint
+#from pprint import pprint
 
 
 ############### Log Class ################
@@ -97,6 +97,7 @@ class FormatManager(threading.Thread):
 
 		while True:
 			if formatQueue.qsize() is 0:
+				time.sleep(1) # This line need for decreasing cpu time
 				continue
 			
 			self.__data = list(formatQueue.get())
