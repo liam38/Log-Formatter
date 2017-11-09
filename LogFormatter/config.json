@@ -1,18 +1,36 @@
 {
 	"Destination":{
 		"IP":"192.168.56.1",
-		"Port":514
+		"Port":5514
 	},
 
-	"Delimiter":[", "],
+	"Delimiter":[" | "],
 
 	"Format":{
-		"T_UserEvent":["Category","Code","LogTitle","EventTime","NetMan Co., Ltd. LABS"],
+		"T_UserEvent":["Category","LogTitle","Code","EventTime"],
 		"T_Alarm_System":["Category","LogTitle","Code","AlarmTime"],
 		"T_Alarm_IP":["Category","LogTitle","Code","AlarmTime"],
 		"T_Alarm_PC":["Category","LogTitle","Code","AlarmTime"],
-		"T_Alarm_Traffic":["Category","LogTitle"],
-		"T_Alarm_WDI":["UID"],
+		"T_Alarm_Traffic":["Category","LogTitle", "Code", "AlarmTime"],
+		"T_Alarm_WDI":["Category", "LogTitle", "Code", "AlarmTime"],
 		"T_UA_UserEvent":["Category","LogTitle","Code","EventTime"]
+	},
+
+	"HowToUse":{
+		"1":"Destination ) log를 보낼 목적지의 IP & Port 기입",
+		"2":"Delimiter ) log의 각 항목을 구분 짓는 구분자 기입",
+		"3":"Format ) 각 Eventlog의 범주에 해당하는 형식을 작성하는 곳",
+		"4":"하나의 범주는 하나의 list를 갖으며, 각 list의 항목명은 해당 테이블의 필드 명",
+		"5":"예외적으로 Category, LogTitle은 필드명이 아닌 항목이며, 아무 해당 없는 항목명의 경우 text로 인식하고 그대로 출력한다."	
+	},
+
+	"FiledName":{
+		"T_UserEvent":["UID","EventGroup","Code","DetailCode","EventTime","ConsoleIP","UserID","AgentIP","AgentMACU","AgentMACL","LanID","TargetIP","TargetIP2","TargetMACU","TargetMACL","TargetName","LoginID","Description","Recognized"],
+		"T_Alarm_System":["UID","Code","AlarmType","AlarmTime","TargetIP","TargetName","SystemType","Description","Recognized"],
+		"T_Alarm_IP":["1","2"],
+		"T_Alarm_PC":["1","2"],
+		"T_Alarm_Traffic":["UID","AlarmTime","TargetIP","IfIndex","CurrentValue","Threshold","MaxSpeed","Status","Recognized"],
+		"T_Alarm_WDI":["UID","AlarmTime","TargetIP","IfIndex","CurrentValue","Threshold","Status","Recognized"],
+		"T_UA_UserEvent":["1","2"]
 	}
 }

@@ -43,6 +43,45 @@ class LogManager(threading.Thread):
 
 			if seq is 0 or seq is 6:
 				sql = """select * from """ + titlelist.table_list[seq] + """ where EventTime >= '""" + prev_time.strftime('%Y-%m-%d %H:%M:%S') + """' and EventTime < '""" + current_time.strftime('%Y-%m-%d %H:%M:%S') + """'"""
+#			elif seq is 4:
+#				sql = """
+#				select
+#				    CASE WHEN AT.Status=1 OR AT.Status=2 OR AT.Status=16 OR AT.Status=32 OR AT.Status=64 THEN '장애'
+#						ELSE '정보' END AS AlarmType
+#					, AT.AlarmTime
+#j					, CASE WHEN AT.Status=1 THEN '입력 트래픽 입계치 초과 시작'
+#						WHEN AT.Status=2 THEN '출력 트래픽 임계치 초과 시작'
+#						WHEN AT.Status=4 THEN '입력 트래픽 정상 시작'
+#						WHEN AT.Status=8 THEN '출력 트래픽 정상 시작'
+#						WHEN AT.Status=16 THEN '포트 응답 없음'
+#j						WHEN AT.Status=32 THEN 'CPU 임계치 초과 시작'
+#						WHEN AT.Status=62 THEN 'Memory 임계치 초과 시작'
+#						WHEN AT.Status=128 THEN 'CPU 정상 시작'
+#j						WHEN AT.Status=256 THEN 'Memory 정상 시작'
+#					ELSE '' END AS AlarmTitle
+#j					, INET_NTOA(AT.TargetIP) AS IP
+#					, CASE WHEN AT.Status=32 OR AT.Status=64 OR AT.Status=128 OR AT.Status=256 THEN '-'
+#					ELSE 'PM' END AS System
+#					, AT.CurrentValue AS CurrentValue
+#					, AT.MaxSpeed AS MaxSpeed
+#j					, AT.Threshold AS Threshold
+#				from T_Alarm_Traffic AS AT where AlarmTime >= '""" + prev_time.strftime('%Y-%m-%d %H:%M:%S') + """' and AlarmTime < '""" + current_time.strftime('%Y-%m-%d %H:%M:%S') + """'"""
+#			elif seq is 5:
+#				sql = """
+#j				select
+#				    CASE WHEN AW.Status=1 OR AW.Status=2 OR AW.Status=16 THEN '장애'
+#						ELSE '정보' END AS AlarmType
+#j					, AW.AlarmTime
+#					, CASE WHEN AW.Status=1 THEN CONCAT("입력 Pps 임계치 초과 시작 [", AW.IfIndex, "]")
+#						WHEN AW.Status=2 THEN CONCAT("출력 Pps 임계치 초가 시작 [", AW.IfIndex, "]")
+#						WHEN AW.Status=4 THEN CONCAT("입력 Pps 정상 시작 [", AW.IfIndex, "]")
+#						WHEN AW.Status=8 THEN CONCAT("출력 Pps 정상 시작 [", AW.IfIndex, "]")
+#						WHEN AW.Status=16 THEN '응답 없음'
+#					ELSE '' END AS AlarmTitle
+#					, INET_NTOA(AW.TargetIP) AS IP
+#					, AW.CurrentValue AS CurrentValue
+#					, AW.Threshold AS Threshold
+#				from T_Alarm_WDI AS AW where AlarmTime >= '""" + prev_time.strftime('%Y-%m-%d %H:%M:%S') + """' and AlarmTime < '""" + current_time.strftime('%Y-%m-%d %H:%M:%S') + """'"""
 			else:
 				sql = """select * from """ + titlelist.table_list[seq] + """ where AlarmTime >= '""" + prev_time.strftime('%Y-%m-%d %H:%M:%S') + """' and AlarmTime < '""" + current_time.strftime('%Y-%m-%d %H:%M:%S') + """'"""
 
@@ -58,7 +97,7 @@ class LogManager(threading.Thread):
 					temp.insert(0, seq-1)
 					row = tuple(temp)
 					formatQueue.put(row)
-
+					print("before Que:",  formatQueue.qsize())
 		db.close()	
 
 ##################################################
@@ -91,31 +130,41 @@ class FormatManager(threading.Thread):
 		device_log = title.getDevice()
 		system_log = title.getSystem()
 		terminal_log = title.getTerminal()
+		traffic_log = title.getTraffic()
+		overpacket_log = title.getOverPacket()
 		user_log = title.getUser()
 
 		handler = logging.handlers.SysLogHandler(address = (destip,destport))
 
 		while True:
 			if formatQueue.qsize() is 0:
-				time.sleep(1) # This line need for decreasing cpu time
+				print("after Que:",  formatQueue.qsize())
+				time.sleep(1) # This line is needed for decreasing cpu time
 				continue
 			
 			self.__data = list(formatQueue.get())
 			index = self.__data.pop(0)
 
 			if index == 0:
+				print("관리자설정")
 				msg = self.userEvent(formats["T_UserEvent"], admin_log)
 			elif index == 1:
+				print("장비관리")
 				msg = self.alarm_System(formats["T_Alarm_System"], device_log)
 			elif index == 2:
+				print("시스템접근제어")
 				msg = self.alarm_IP(formats["T_Alarm_IP"], system_log)
 			elif index == 3:
+				print("단말자산")
 				msg = self.alarm_PC(formats["T_Alarm_PC"], terminal_log)
 			elif index == 4:
-				msg = self.alarm_Traffic(formats["T_Alarm_Traffic"])
+				print("성능분석")
+				msg = self.alarm_Traffic(formats["T_Alarm_Traffic"], traffic_log)
 			elif index == 5:
-				msg = self.alarm_WDI(formats["T_Alarm_WDI"])
+				print("과다패킷")
+				msg = self.alarm_WDI(formats["T_Alarm_WDI"], overpacket_log)
 			elif index == 6:
+				print("사용자인증")
 				msg = self.ua_UserEvent(formats["T_UA_UserEvent"], user_log)
 
 			form = '%(message)s'
@@ -166,13 +215,13 @@ class FormatManager(threading.Thread):
 
 	def alarm_Traffic(self, formats, title):
 		raw_data = {'UID':self.__data[0], 'AlarmTime':self.__data[1].strftime('%Y-%m-%d %H:%M:%S'), 'TargetIP':self.__data[2], 'IfIndex':self.__data[3], 'CurrentValue':self.__data[4], 'Threshold':self.__data[5],
-		'MaxSpeed':self.__data[6], 'Status':self.__data[7], 'Recognized':self.__data[8]}
+		'MaxSpeed':self.__data[6], 'Code':self.__data[7], 'Recognized':self.__data[8]}
 
 		return self.__delimiter.join(utility.formatting(formats, title, 4, raw_data))
 	
 	def alarm_WDI(self, formats, title):
 		raw_data = {'UID':self.__data[0], 'AlarmTime':self.__data[1].strftime('%Y-%m-%d %H:%M:%S'), 'TargetIP':self.__data[2], 'IfIndex':self.__data[3], 'CurrentValue':self.__data[4], 'Threshold':self.__data[5],
-		'Status':self.__data[6], 'Recognized':self.__data[7]}
+		'Code':self.__data[6], 'Recognized':self.__data[7]}
 
 		return self.__delimiter.join(utility.formatting(formats, title, 5, raw_data))
 
@@ -232,6 +281,10 @@ class GetTitle():
 		return self.__Title["System Access Control"]
 	def getTerminal(self):
 		return self.__Title["Terminal Asset"]
+	def getTraffic(self):
+		return self.__Title["Performance Analysis"]
+	def getOverPacket(self):
+		return self.__Title["Over-Packet Detection"]
 	def getUser(self):
 		return self.__Title["User Authentication"]
 
