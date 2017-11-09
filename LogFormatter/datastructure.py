@@ -97,7 +97,6 @@ class LogManager(threading.Thread):
 					temp.insert(0, seq-1)
 					row = tuple(temp)
 					formatQueue.put(row)
-					print("before Que:",  formatQueue.qsize())
 		db.close()	
 
 ##################################################
@@ -138,7 +137,6 @@ class FormatManager(threading.Thread):
 
 		while True:
 			if formatQueue.qsize() is 0:
-				print("after Que:",  formatQueue.qsize())
 				time.sleep(1) # This line is needed for decreasing cpu time
 				continue
 			
@@ -146,25 +144,18 @@ class FormatManager(threading.Thread):
 			index = self.__data.pop(0)
 
 			if index == 0:
-				print("관리자설정")
 				msg = self.userEvent(formats["T_UserEvent"], admin_log)
 			elif index == 1:
-				print("장비관리")
 				msg = self.alarm_System(formats["T_Alarm_System"], device_log)
 			elif index == 2:
-				print("시스템접근제어")
 				msg = self.alarm_IP(formats["T_Alarm_IP"], system_log)
 			elif index == 3:
-				print("단말자산")
 				msg = self.alarm_PC(formats["T_Alarm_PC"], terminal_log)
 			elif index == 4:
-				print("성능분석")
 				msg = self.alarm_Traffic(formats["T_Alarm_Traffic"], traffic_log)
 			elif index == 5:
-				print("과다패킷")
 				msg = self.alarm_WDI(formats["T_Alarm_WDI"], overpacket_log)
 			elif index == 6:
-				print("사용자인증")
 				msg = self.ua_UserEvent(formats["T_UA_UserEvent"], user_log)
 
 			form = '%(message)s'
