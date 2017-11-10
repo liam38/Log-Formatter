@@ -21,16 +21,16 @@
 		"2":"Delimiter ) log의 각 항목을 구분 짓는 구분자 기입",
 		"3":"Format ) 각 Eventlog의 범주에 해당하는 형식을 작성하는 곳",
 		"4":"하나의 범주는 하나의 list를 갖으며, 각 list의 항목명은 해당 테이블의 필드 명",
-		"5":"예외적으로 Category, LogTitle은 필드명이 아닌 항목이며, 아무 해당 없는 항목명의 경우 text로 인식하고 그대로 출력한다."	
+		"5":"예외적으로 Category, LogTitle은 필드명이 아닌 항목으로 범주와 로그 제목을 의미하며, 아무 해당 없는 항목명의 경우 text로 인식하고 그대로 출력한다."	
 	},
 
 	"FiledName":{
 		"T_UserEvent":["UID","EventGroup","Code","DetailCode","EventTime","ConsoleIP","UserID","AgentIP","AgentMACU","AgentMACL","LanID","TargetIP","TargetIP2","TargetMACU","TargetMACL","TargetName","LoginID","Description","Recognized"],
 		"T_Alarm_System":["UID","Code","AlarmType","AlarmTime","TargetIP","TargetName","SystemType","Description","Recognized"],
-		"T_Alarm_IP":["1","2"],
-		"T_Alarm_PC":["1","2"],
+		"T_Alarm_IP":["UID","Code","AlarmType","MonitoringMode","AgentMACU","AgentMACL","AdaptorName","TargetIP","TargetMACU","TargetMACL","VAgentGroupID1","VAgentGroupID2","VAgentGroupID3","VAgentGroupName1","VAgentGroupName2","VAgentGroupName3","Description","UserField1","UserField2","UserField3","UserField4","UserField5","UserField6","UserField7","UserField8","UserField9","UserField10","UserField11","UserField12","UserField13","UserField14","UserField15","UserField16","UserField17","UserField18","UserField19","UserField20"],
+		"T_Alarm_PC":["UID","AlarmTime","AlarmType","Code","DetailCode","SystemID","UserID","IP1","MACU1","MACL1","IP2","MACU2","MACL2","IP3","MACU3","MACL3","IP4","MACU4","MACL4","IP5","MACU5","MACL5","GroupID0","GroupID1","GroupID2","GroupID3","GroupID4","GroupID5","GroupID6","GroupID7","GroupID8","GroupID9","GroupName0","GroupName1","GroupName2","GroupName3","GroupName4","GroupName5","GroupName6","GroupName7","GroupName8","GroupName9","Description"],
 		"T_Alarm_Traffic":["UID","AlarmTime","TargetIP","IfIndex","CurrentValue","Threshold","MaxSpeed","Status","Recognized"],
 		"T_Alarm_WDI":["UID","AlarmTime","TargetIP","IfIndex","CurrentValue","Threshold","Status","Recognized"],
-		"T_UA_UserEvent":["1","2"]
+		"T_UA_UserEvent":["EventID","Code","EventTime","UserID","UserName","Jumin","Position_1","Position_2","Position_3","UserWorkGroup","FirstRegisterationDay","ComputerName","ComputerWorkGroup","Description","RemoteIP","EventType","FromWeb","Rank","TelNum","CellPhone","Email","ReservedField1","ReservedField2","ReservedField3","ReservedField4","ReservedField5","NASName","NASShortname","NASMAC"]
 	}
 }
