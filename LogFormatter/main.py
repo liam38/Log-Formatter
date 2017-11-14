@@ -1,10 +1,6 @@
-#from datastructure import formatQueue, transQueue
-from datastructure import LogManager, FormatManager#, GetConfigure
-#import json
+from datastructure import LogManager, FormatManager, Transport#, GetConfigure
 import datetime
 import os, sys
-#import threading
-#import time
 
 def background():
 	try:
@@ -29,9 +25,11 @@ def doTask():
 
 	lm = LogManager(datetime.datetime.now())
 	fm = FormatManager()
+	tm = Transport()
 
 	lm.start()
 	fm.start()
+	tm.start()
 
 if __name__ == '__main__':
 	background()
