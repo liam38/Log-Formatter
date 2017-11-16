@@ -1,10 +1,6 @@
-#from datastructure import formatQueue, transQueue
 from datastructure import LogManager, FormatManager#, GetConfigure
-#import json
 import datetime
 import os, sys
-#import threading
-#import time
 
 def background():
 	try:
